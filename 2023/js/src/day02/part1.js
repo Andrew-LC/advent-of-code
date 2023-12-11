@@ -10,18 +10,17 @@ export function part1(data){
 	const games = secondPart
 	      .split(';')
 	      .map(game => {
-		  const gamesIteration = game
-			.split(',')
-			.map(v => v.trim());
+		  return  game
+		      .split(',')
+		      .map(v => v.trim())
+		      .map(v => {
+			  let [count, color] = v.split(' ');
 
-		  return gamesIteration.map(v => {
-		      let [count, color] = v.split(' ');
-
-		      if(count > Count[color]){
-			  return false;
-		      }
-		      return true;
-		  }).every(value => value == true)
+			  if(count > Count[color]){
+			      return false;
+			  }
+			  return true;
+		      }).every(value => value == true)
 	      }).every(value => value == true);
 
 	return games
