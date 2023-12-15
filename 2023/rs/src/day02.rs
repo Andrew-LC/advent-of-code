@@ -1,26 +1,38 @@
-use rs::read;
-
-#[allow(dead_code)]
-#[derive(Debug)]
-struct Dice {
-    color: String,
-    count: u32,
-}
+pub(crate) use rs::read;
 
 fn main() {
-    let data: Vec<String> = read("./data/test.txt");
+    let data: Vec<String> = read("./data/day02-input.txt");
 
-    let _result: Vec<_> = data
+    let result: usize = data
         .iter()
-        .flat_map(|line| {
+        .map(|line| {
             let (_, second_part) = line.split_once(':').unwrap();
-            let second_part = second_part.trim_start();
-            second_part.split(';').flat_map(|game| {
-                game.split(',').map(|v| v.trim()).map(|iteration| {
-                    let (count, color) = iteration.split_once(" ").unwrap();
-		    Dice {color.to_string(), count.parse().unwrap()}
+            let games: Vec<bool> = second_part
+                .split(';')
+                .map(|game| {
+                    game.split(',')
+                        .map(|v| v.trim())
+                        .any(|iteration| {
+                            let (count, color) = iteration.split_once(" ").unwrap();
+                            let count: u32 = count.parse().unwrap();
+
+                            match color {
+                                "blue" => count > 14,
+                                "red" => count > 12,
+                                "green" => count > 13,
+                                _ => false,
+                            }
+                        })
                 })
-            })
+                .collect();
+
+            games.iter().any(|&value| value)
         })
-        .collect();
+        .enumerate()
+        .fold(0, |acc, (index, value)| {
+            let index = index + 1;
+            acc + if value { index } else { 0 }
+        });
+
+    println!("{}", result+1);
 }
